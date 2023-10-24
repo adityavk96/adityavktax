@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+    
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link rel="website icon" type="png" href="AA.jpg">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Aditya GST</title>
+
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+        <style>
+            /*  page link decoration */
+header{
+  font-family:sans-serif, cursive;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-right: 5%;
+  
+  background-color: #160458;
+  display: auto;
+}
+header h1{
+  color: #f9fafb;
+  font-size: 25px;
+}
+
+
+header p{
+  color: #434F5B;
+}
+/* login link decoration*/
+.login-link {
+  font-size: 15px;
+  color: white; /* Text color is white */
+  text-decoration: none; /* Remove underline (if any) */
+}
+/* page link decoration  */
+#topnav{
+  font-family:sans-serif, cursive;
+  background-color: #2a34f5;
+  font-size: 20px;
+  display: flex;
+  text-decoration: none;
+  justify-content:start;
+  text-transform:capitalize;
+  width: 100%;
+}
+#topnav ul{
+  padding: 9px;
+  margin: 0px;
+  text-align: center;
+}
+#topnav ul li{
+  list-style-type: none;
+  display: inline;
+}
+#topnav ul li a{
+  color: #F2F2F2;
+  text-decoration: none;
+  margin: 0px 5px;
+  padding: 5px;
+}
+#topnav ul li a:hover{
+  border-bottom: 1px solid #F2F2F2;
+  -webkit-transition: 50ms linear 0s;
+  -moz-transition: 50ms linear 0s;
+  transition: 50ms linear 0s;
+}
+
+        </style>
+   <header>
+    <h1>Aditya Kumar Vishwakarma</h1>
+</header>
+
+<nav id="topnav">
+    <ul>
+        <li><a href="index.html">Home<i class=""></i></a></li>
+        <li><a href="Services.html">Services<i class=""></i></a></li>
+        <li><a href="download.html">Download<i class=""></i></a></li>
+    </ul>
+</nav>
+
+<!-- Upload Button for Purchase -->
+<button onclick="uploadPurchase()">Upload Purchase</button>
+<input type="file" id="purchaseFile" accept=".csv, .xlsx">
+
+<!-- Upload Button for GSTR 2A -->
+<button onclick="uploadGSTR2A()">Upload GSTR 2A</button>
+<input type="file" id="gstr2aFile" accept=".csv, .xlsx">
+
+
+<!-- Reconciliation Button -->
+<button onclick="runReconciliation()">Run Reconciliation</button>
+
+<!-- Show Reconciliation Results Button -->
+<button onclick="showReconciliationResults()">Show Reconciliation Results</button>
+
+<!-- Download Reconciliation Report Button -->
+<button onclick="downloadReconciliationReport()">Download Reconciliation Report</button>
+
+
+  <body>
+  
+  
+  <script>
+  // Function to handle Purchase upload
+function uploadPurchase() {
+    // Add your logic to upload the purchase file and update the table here
+    alert("Purchase file uploaded!");
+}
+
+// Function to handle GSTR 2A upload
+function uploadGSTR2A() {
+    // Add your logic to upload the GSTR 2A file and update the table here
+    alert("GSTR 2A file uploaded!");
+}
+
+// Function to run reconciliation
+function runReconciliation() {
+    // Add your logic to run reconciliation in the background here
+    alert("Reconciliation is running in the background!");
+}
+
+// Function to show reconciliation results
+function showReconciliationResults() {
+    // Add your logic to display reconciliation results
+    alert("Showing reconciliation results...");
+}
+
+// Function to download reconciliation report
+function downloadReconciliationReport() {
+    // Add your logic to generate and download the reconciliation report
+    alert("Downloading reconciliation report...");
+}
+
+  </script>
+</body>
+</html>
+    

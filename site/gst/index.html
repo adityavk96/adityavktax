@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.3/xlsx.full.min.js"></script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Import</title>
+</head>
+<body>
+    <h1>Data Import</h1>
+      <!-- File Upload Input -->
+    <input type="file" id="excelFile" accept=".xlsx">
+    
+    
+    
+    <!-- Button to Trigger Data Processing -->
+    <button id="recoButton">RECO</button>
+    <!-- Button to Trigger Data Processing -->
+
+   <!-- Button to Trigger Data Download <button id="downloadButton" >Download Data</button>-->
+
+   <A href="/PURCHASE.xlsx"Download="PURCHASE.xlsx"> <button>Download Formate</button></A>
+    
+    <!-- Table to Display Imported Data -->
+    <table id="dataTable" border="1">
+        <thead>
+            <tr>
+                <th>GSTN</th>
+                <th>NAME</th>
+                <th>INVOICE NUMBER</th>
+                <th>DATE</th>
+                <th>TAXABLE VALUE</th>
+                <th>TOTAL TAX IGST</th>
+                <th>CGST</th>
+                <th>SGST</th>
+                <th>CESS</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+
+    <!-- JavaScript for Handling File Upload and Data Processing -->
+    <script src="script.js"></script>
+</body>
+</html>

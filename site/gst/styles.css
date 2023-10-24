@@ -1,0 +1,82 @@
+
+  /*  page link decoration */
+  header{
+    font-family:sans-serif, cursive;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-right: 5%;
+    background-color: #fefeff;
+    display: auto;
+  }
+  header h1{
+    color: #01060a;
+    font-size: 15px;
+    font-weight: bold;
+  }
+  
+  
+  header p{
+    color: #434F5B;
+  }
+ 
+  /* page link decoration  */
+  #topnav{
+    font-family:sans-serif, cursive;
+    background-color: #2a34f5;
+    font-size: 20px;
+    display: flex;
+    flex-wrap:wrap ;
+    text-decoration: none;
+    justify-content:start;
+    text-transform:capitalize;
+    width: 100%;
+  }
+  #topnav ul{
+    padding: 9px;
+    margin: 0px;
+    text-align: center;
+  }
+  #topnav ul li{
+    list-style-type: none;
+    display: inline;
+  }
+  #topnav ul li a{
+    color: #F2F2F2;
+    text-decoration: none;
+    margin: 0px 5px;
+    padding: 5px;
+  }
+  #topnav ul li a:hover{
+    border-bottom: 1px solid #F2F2F2;
+    -webkit-transition: 50ms linear 0s;
+    -moz-transition: 50ms linear 0s;
+    transition: 50ms linear 0s;
+  }
+
+
+
+body {
+    font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+    
+    position: center;
+    text-decoration: #2a34f5;
+    
+}
+
+  /*#year-selection {
+   display: grid;
+    padding: auto;
+    border: #2a34f5;
+    position: center;
+   
+}
+
+.grid{
+  display: flex;
+  position: center;
+}*/
+
+
+
+

@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h2>Welcome to the Protected Page</h2>
+    <p>This is a protected page that can only be accessed by logged-in users.</p>
+<script>
+    // Check if the entered username and password are correct
+if (username === "Akv2296@gmail.com" && password === "Akv@2215") {
+    // Store user's login status in session storage
+    sessionStorage.setItem("isLoggedIn", "true");
+    
+    // Specify the redirection URL for each page
+    var redirectTo = "index.html"; // Redirect to index.html after login
+    // If you want to redirect to Download.html, change it to:
+    // var redirectTo = "Download.html";
+    // If you want to redirect to Services.html, change it to:
+    // var redirectTo = "Services.html";
+    
+    // Redirect to the specified page
+    window.location.href = redirectTo;
+} else {
+    alert("Incorrect username or password. Please try again.");
+}
+</script>
+</body>
+</html>

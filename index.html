@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+     <!-- Boxicons CSS -->
+     <link href='https://unpkg.com/boxicons@2.1.2/css/boxicons.min.css' rel='stylesheet'>
+                        
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<!--<form id="loginForm" action="/index" method="POST">
+<form id="loginForm" action="login.php" method="post">-->
+    <style>
+/* Google Fonts - Poppins */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap');
+
+    /* Reset some default styles for better consistency */
+    body, html {
+    margin: 0;
+    padding: 0;
+   }
+h2{
+    color: #126ddc;
+    font-weight: bold;
+    font-style: italic;
+    
+    
+}
+
+/* Center the login form */
+.login-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-image: url(https://phoneky.co.uk/thumbs/screensavers/down/nature/nature_SwxDUxRP.gif);
+
+}
+
+/* Style the form container (box) */
+.login-form {
+    background-color: #ffffff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    width: 300px;
+    background-image: url(https://phoneky.co.uk/thumbs/screensavers/down/nature/waterfall_z3kzqo2y.gif);
+}
+
+/* Style the form elements */
+.login-form label {
+    display: block;
+    margin-bottom: 10px;
+    font-weight: bold;
+    color: #273fcb;
+}
+
+.login-form input[type="email"],
+.login-form input[type="password"] {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.login-form button {
+    background-color: #eff2f5;
+    color: #020202;
+    border: none;
+    border-radius: 5px;
+    padding: 10px 20px;
+    cursor: pointer;
+}
+
+.login-form button:hover {
+    background-color: #0056b3;
+}
+
+
+
+    </style>
+<body>
+    <div class="login-container" >
+        
+        <form class="login-form" id="loginForm">
+            <h2>Login</h2>
+            <label for="username">Username (Email):</label>
+            <input type="email" id="username" name="username" required><br>
+
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="password" required>
+
+            <button type="submit">Login</button>
+        </form>
+    </div>
+    
+   
+    <script>
+        document.getElementById("loginForm").addEventListener("submit", function(event) {
+            event.preventDefault();
+            
+            var username = document.getElementById("username").value;
+            var password = document.getElementById("password").value;
+
+     
+    // Check if the entered username and password are correct
+if (username === "adityavk96@gmail.com" && password === "Neetuv@221594") {
+    // Store user's login status in session storage
+    sessionStorage.setItem("isLoggedIn", "true");
+    
+    // Specify the redirection URL for each page
+    var redirectTo = "/aditya kumar vishwakarma/site/index.html"; // Redirect to index.html after login
+    // If you want to redirect to Download.html, change it to:
+    // var redirectTo = "Download.html";
+    // If you want to redirect to Services.html, change it to:
+    // var redirectTo = "Services.html";
+    
+    // Redirect to the specified page
+    window.location.href = redirectTo;
+} else {
+    alert("Incorrect username or password. Please try again.");
+}
+}
+        );
+  
+</script>
+
+</body>
+</html>

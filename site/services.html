@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/site/styles.css">
+    <title>Menu</title>
+
+<style>
+    /* Define CSS styles for your buttons and button box */
+    .button-box {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); /* Adjust the column size as needed */
+        grid-gap: 10px;
+        justify-content: flex-start; /* Align the buttons to the left */
+        margin: 50px auto; /* Adjust margins as needed */
+        padding: 20px;
+        background-color: rgb(212, 212, 242);
+        text-align: center;
+    }
+
+    button {
+        padding: 10px;
+        border: none;
+        cursor: pointer;
+        transition: transform 0.2s;
+        border-radius: 15%;
+        font-size: 16px; /* Adjust the font size as needed */
+    }
+
+    /* Style the buttons with different background colors */
+    button.btn {
+        background-color: transparent;
+        color: rgb(109, 24, 24);
+        font-weight: 800;
+    }
+
+    
+
+    /* Add zoom-in effect on hover */
+    button:hover {
+        transform: scale(1.1); /* Adjust the scale factor for zoom effect */
+    }
+
+    /* Media query for desktop screens */
+    @media screen and (min-width: 768px) {
+        /* Center-align the header and navigation links for desktop */
+        header, #top {
+            text-align: center;
+        }
+
+        .button-box {
+           
+
+            display: flex;
+        flex-direction:row;
+        justify-content: flex-start; /* Align the buttons to the left */
+        /*margin: 50px auto;  Adjust margins as needed
+        padding: 15px; */
+        
+        
+        
+        width: 10%; /* Make the button box take up the full width */
+        }
+
+        /* You can adjust the button styles as needed */
+        button.btn {
+            background-color:transparent;
+            color: rgb(147, 19, 19);
+            font-weight: 800;
+            padding: 20px; /* Adjust padding to control button size */
+            min-width: 1px; /* Set a minimum width for the buttons */
+            /* You can adjust other styles as needed */
+        }
+    }
+
+    footer {
+        width: 97.8%;
+        background-color: violet;
+        color: white;
+        font-weight: 100%;
+        text-align: center;
+        padding: 10px;
+    }
+
+</style>
+<title>Aditya GST</title>
+
+
+
+
+<header>
+  <link rel="stylesheet" type="text/css" href="styles.css">
+  <h1>Aditya Kumar Vishwakarma</h1>
+  
+</header>
+
+
+
+<body>
+    
+    <nav id="topnav">
+        <ul>
+            <li><a href="index.html">Home<i class="fas fa-home"></i></a>
+            <ul><li><a href="index.html" >GSTR 2A</a></li></ul>
+            </li>
+            <li><a href="Services.html">Services<i class="fas fa-cogs"></i></a></li>
+            <li><a href="Download.html">Download<i class="fas fa-download"></i></a></li>
+        </ul>
+    </nav>
+   
+        <button class="btn"><a href="index.html" rel="noopener noreferrer">GSTR 2A<i class="fas fa-home"></i></a></button>
+        <button class="btn"><a href="https://www.google.com" rel="noopener noreferrer">GSTR 1</a></button>
+        <button class="btn"><a href="https://www.google.com" rel="noopener noreferrer">GSTR 3B</a></button>
+        <button class="btn"><a href="/Aditya Kumar vishwakarma/site/RECO.HTML" rel="noopener noreferrer">Reco</a></button>
+    
+   
+</body>
+
+
+</html>
