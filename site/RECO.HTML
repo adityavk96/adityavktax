@@ -1,143 +1,1061 @@
 <!DOCTYPE html>
 <html lang="en">
-    
+<head>
     <meta charset="UTF-8">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
-    <link rel="website icon" type="png" href="AA.jpg">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GST Reconciliation</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- SheetJS (xlsx) CDN for Excel file handling -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #000080; /* Navy Blue background */
+            color: #e0e7ff; /* Light text for contrast */
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+            background-color: #1a202c; /* Darker shade for container */
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .card {
+            background-color: #2d3748; /* Slightly lighter dark for cards */
+            border-radius: 0.75rem; /* rounded-xl */
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem; /* rounded-lg */
+            font-weight: 600; /* font-semibold */
+            transition: background-color 0.2s ease-in-out;
+        }
+        .btn-primary {
+            background-color: #4f46e5; /* indigo-600 */
+            color: #fff;
+        }
+        .btn-primary:hover {
+            background-color: #4338ca; /* indigo-700 */
+        }
+        .btn-secondary {
+            background-color: #6b7280; /* gray-500 */
+            color: #fff;
+        }
+        .btn-secondary:hover {
+            background-color: #4b5563; /* gray-600 */
+        }
+        .table-container {
+            overflow-x: auto;
+            border-radius: 0.75rem; /* rounded-xl */
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 1000px; /* Ensure minimum width for scrollability */
+        }
+        th, td {
+            padding: 0.75rem 1rem;
+            text-align: left;
+            border-bottom: 1px solid #4a5568; /* Darker gray for borders */
+        }
+        th {
+            background-color: #4a5568; /* Darker gray for header */
+            font-weight: 600; /* font-semibold */
+            color: #e2e8f0; /* Lighter text for header */
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+        tr:hover {
+            background-color: #2d3748; /* Darker gray on hover */
+        }
+        .status-matched {
+            background-color: #38a169; /* green-600 */
+            color: #fff;
+            font-weight: 600;
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.25rem;
+        }
+        .status-intelligent-matching {
+            background-color: #3182ce; /* blue-600 */
+            color: #fff;
+            font-weight: 600;
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.25rem;
+        }
+        .status-not-in-books {
+            background-color: #e53e3e; /* red-600 */
+            color: #fff;
+            font-weight: 600;
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.25rem;
+        }
+        .status-not-in-2a {
+            background-color: #dd6b20; /* orange-600 */
+            color: #fff;
+            font-weight: 600;
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.25rem;
+        }
+        .status-neither {
+            background-color: #667eea; /* indigo-500 */
+            color: #fff;
+            font-weight: 600;
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.25rem;
+        }
+        .status-tax-miss-match {
+            background-color: #c53030; /* red-700 */
+            color: #fff;
+            font-weight: 600;
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.25rem;
+        }
+        .status-difference-in-amount {
+            background-color: #d69e2e; /* yellow-700 */
+            color: #fff;
+            font-weight: 600;
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.25rem;
+        }
+        .status-minor-difference {
+            background-color: #38a169; /* green-600 */
+            color: #fff;
+            font-weight: 600;
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.25rem;
+        }
+        .message-box {
+            background-color: #2a69ac; /* Darker blue for messages */
+            border: 1px solid #4299e1; /* Blue border */
+            color: #e0f2fe; /* Light text */
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin-top: 1rem;
+            display: none; /* Hidden by default */
+        }
+        .subtotal-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 1.5rem;
+        }
+        .subtotal-table th, .subtotal-table td {
+            border: 1px solid #4a5568; /* Darker gray border */
+            padding: 0.75rem;
+            text-align: left;
+        }
+        .subtotal-table th {
+            background-color: #2c5282; /* Darker indigo for header */
+            font-weight: 700;
+            color: #e0e7ff; /* Light text */
+        }
+        .subtotal-table td {
+            background-color: #2d3748; /* Card background for cells */
+            color: #e0e7ff; /* Light text */
+        }
+        .subtotal-table tfoot td {
+            font-weight: 700;
+            background-color: #1a202c; /* Container background for footer */
+            color: #fff;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="text-4xl font-extrabold text-center text-indigo-300 mb-8">GST Reconciliation Web App</h1>
 
-    <title>Aditya GST</title>
+        <!-- Upload and Download Container -->
+        <div id="uploadContainer">
+            <!-- File Upload Section -->
+            <div class="card">
+                <h2 class="text-2xl font-semibold mb-4 text-gray-200">Upload Data Files</h2>
+                <p class="text-gray-400 mb-4">Please upload your "As Per GSTR-2A or 2B" and "As Per Books" data in Excel (.xlsx) format. Ensure the column headers match the specified format.</p>
 
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- 2A Upload -->
+                    <div>
+                        <label for="file2A" class="block text-lg font-medium text-gray-300 mb-2">As Per GSTR-2A or 2B (Excel .xlsx)</label>
+                        <input type="file" id="file2A" accept=".xlsx" class="block w-full text-sm text-gray-400
+                            file:mr-4 file:py-2 file:px-4
+                            file:rounded-md file:border-0
+                            file:text-sm file:font-semibold
+                            file:bg-indigo-700 file:text-indigo-100
+                            hover:file:bg-indigo-600"/>
+                        <p id="fileName2A" class="mt-2 text-sm text-gray-400"></p>
+                    </div>
 
-        <style>
-            /*  page link decoration */
-header{
-  font-family:sans-serif, cursive;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding-right: 5%;
-  
-  background-color: #160458;
-  display: auto;
-}
-header h1{
-  color: #f9fafb;
-  font-size: 25px;
-}
+                    <!-- Books Upload -->
+                    <div>
+                        <label for="fileBooks" class="block text-lg font-medium text-gray-300 mb-2">As Per Books (Excel .xlsx)</label>
+                        <input type="file" id="fileBooks" accept=".xlsx" class="block w-full text-sm text-gray-400
+                            file:mr-4 file:py-2 file:px-4
+                            file:rounded-md file:border-0
+                            file:text-sm file:font-semibold
+                            file:bg-indigo-700 file:text-indigo-100
+                            hover:file:bg-indigo-600"/>
+                        <p id="fileNameBooks" class="mt-2 text-sm text-gray-400"></p>
+                    </div>
+                </div>
+
+                <div class="mt-8 flex justify-center">
+                    <button id="reconcileBtn" class="btn btn-primary px-8 py-3 text-xl">
+                        <span id="buttonText">Perform Reconciliation</span>
+                        <svg id="loadingSpinner" class="animate-spin -ml-1 mr-3 h-5 w-5 text-white hidden" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                    </button>
+                </div>
+                <div id="messageBox" class="message-box hidden"></div>
+            </div>
+
+            <!-- Download Format Section -->
+            <div class="card">
+                <h2 class="text-2xl font-semibold mb-4 text-gray-200">Download Data Formats</h2>
+                <p class="text-gray-400 mb-4">Download sample Excel (.xlsx) files to ensure your data is in the correct format for upload.</p>
+                <div class="flex flex-col md:flex-row gap-4">
+                    <button id="download2AFormatBtn" class="btn btn-secondary flex-1">Download GSTR-2A or 2B Format</button>
+                    <button id="downloadBooksFormatBtn" class="btn btn-secondary flex-1">Download Books Format</button>
+                </div>
+            </div>
+
+            <!-- View Reconciliation Button (initially hidden) -->
+            <div class="flex justify-center mt-4">
+                <button id="viewReportBtn" class="btn btn-primary hidden">View Reconciliation Report</button>
+            </div>
+        </div>
+
+        <!-- Reconciliation Report Section -->
+        <div id="reportSection" class="card hidden">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-2xl font-semibold text-gray-200">Reconciliation Report: All Invoice Reco Status</h2>
+                <div class="flex gap-2">
+                    <button id="downloadReportBtn" class="btn btn-primary">Download Report</button>
+                    <button id="viewSummaryBtn" class="btn btn-secondary">View Summary</button>
+                    <button id="backToUploadBtn" class="btn btn-secondary">Back to Upload Files</button>
+                </div>
+            </div>
+
+            <div class="table-container">
+                <table id="recoTable" class="min-w-full bg-gray-700">
+                    <thead>
+                        <tr>
+                            <th>S.No.</th>
+                            <th>GSTIN</th>
+                            <th>Supplier Name</th>
+                            <th>Invoice No. (Books)</th>
+                            <th>Invoice Date (Books)</th>
+                            <th>Taxable Value (Books)</th>
+                            <th>IGST (Books)</th>
+                            <th>CGST (Books)</th>
+                            <th>SGST (Books)</th>
+                            <th>Cess (Books)</th>
+                            <th>Invoice No. (2A)</th>
+                            <th>Invoice Date (2A)</th>
+                            <th>Taxable Value (2A)</th>
+                            <th>IGST (2A)</th>
+                            <th>CGST (2A)</th>
+                            <th>SGST (2A)</th>
+                            <th>Cess (2A)</th>
+                            <th>Difference (Calc)</th>
+                            <th>
+                                <div class="flex items-center justify-between">
+                                    <span>Status</span>
+                                    <select id="statusFilter" class="ml-2 p-1 border rounded-md text-sm text-gray-700 bg-gray-300">
+                                        <option value="all">Show All</option>
+                                        <!-- Options populated by JS -->
+                                    </select>
+                                </div>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Data will be inserted here by JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Summary Section -->
+        <div id="summarySection" class="card hidden">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-2xl font-semibold text-gray-200">Reconciliation Summary</h2>
+                <button id="backToReportFromSummaryBtn" class="btn btn-secondary">Back to Report</button>
+            </div>
+            <div id="subtotalsContainer">
+                <!-- Subtotal table will be rendered here -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Global variables to store parsed data and reconciliation result
+        let data2A = [];
+        let dataBooks = [];
+        let reconciledDataGlobal = null; // Stores the last reconciliation result
+        let processedBooksGlobal = null; // Stores processed books data for download
+        let processed2AGlobal = null;   // Stores processed 2A data for download
+        let subtotalsGlobal = {}; // Stores the last calculated subtotals for download
+
+        // Utility function to parse Excel data using SheetJS
+        function parseExcel(arrayBuffer) {
+            const workbook = XLSX.read(arrayBuffer, { type: 'array' });
+            const sheetName = workbook.SheetNames[0]; // Assuming data is in the first sheet
+            const worksheet = workbook.Sheets[sheetName];
+            const json = XLSX.utils.sheet_to_json(worksheet);
+            return json;
+        }
+
+        // Utility function to format date for consistency (MM/DD/YYYY)
+        function formatDate(dateString) {
+            if (!dateString) return '';
+            try {
+                // SheetJS might convert dates to numbers (Excel's date system)
+                if (typeof dateString === 'number') {
+                    // Convert Excel date number to JS Date object
+                    const date = XLSX.SSF.parse_date_code(dateString);
+                    // Ensure month and day are two digits
+                    const month = String(date.m).padStart(2, '0');
+                    const day = String(date.d).padStart(2, '0');
+                    return `${month}/${day}/${date.y}`;
+                }
+                // Try parsing common string formats
+                const date = new Date(dateString);
+                if (isNaN(date.getTime())) {
+                    // Handle DD-MM-YYYY or DD/MM/YYYY
+                    const parts = dateString.split(/[-/]/);
+                    if (parts.length === 3) {
+                        const day = parseInt(parts[0]);
+                        const month = parseInt(parts[1]) - 1; // Month is 0-indexed
+                        const year = parseInt(parts[2]);
+                        const d = new Date(year, month, day);
+                        if (!isNaN(d.getTime())) {
+                            const formattedMonth = String(d.getMonth() + 1).padStart(2, '0');
+                            const formattedDay = String(d.getDate()).padStart(2, '0');
+                            return `${formattedMonth}/${formattedDay}/${d.getFullYear()}`;
+                        }
+                    }
+                    return dateString; // Return original if parsing fails
+                }
+                const formattedMonth = String(date.getMonth() + 1).padStart(2, '0');
+                const formattedDay = String(date.getDate()).padStart(2, '0');
+                return `${formattedMonth}/${formattedDay}/${date.getFullYear()}`;
+            } catch (e) {
+                console.error("Date parsing error:", e);
+                return dateString; // Return original if error
+            }
+        }
+
+        // Utility function to convert value to number, handling empty strings as 0
+        function toNum(value) {
+            const num = parseFloat(value);
+            return isNaN(num) ? 0 : num;
+        }
+
+        // --- Core Reconciliation Logic (Translated from VBA) ---
+
+        // Simulates GSTRECO_SETP1 and parts of SETP2 for initial data processing
+        function processRawData(dataBooksRaw, data2ARaw) {
+            const processedBooks = dataBooksRaw.map(item => {
+                const obj = { ...item };
+                // Key generation: GSTIN + Invoice_No
+                obj.recoKey = `${obj.GSTIN || ''}${obj.Invoice_No || ''}`.toUpperCase();
+                // Convert relevant fields to numbers
+                obj.Taxable_Value = toNum(obj.Taxable_Value);
+                obj.IGST = toNum(obj.IGST);
+                obj.CGST = toNum(obj.CGST);
+                obj.SGST = toNum(obj.SGST);
+                obj.Cess = toNum(obj.Cess);
+                return obj;
+            });
+
+            const processed2A = data2ARaw.map(item => {
+                const obj = { ...item };
+                // Key generation: GSTIN + Invoice_No
+                obj.recoKey = `${obj.GSTIN || ''}${obj.Invoice_No || ''}`.toUpperCase();
+                // Convert relevant fields to numbers
+                obj.Taxable_Value = toNum(obj.Taxable_Value);
+                obj.IGST = toNum(obj.IGST);
+                obj.CGST = toNum(obj.CGST);
+                obj.SGST = toNum(obj.SGST);
+                obj.Cess = toNum(obj.Cess);
+                return obj;
+            });
+
+            return { processedBooks, processed2A };
+        }
+
+        // Simulates GSTRECO_SETP2 and parts of SETP3 for reconciliation
+        function performReconciliation(booksData, _2AData) {
+            const recoData = [];
+            const uniqueKeys = new Set();
+
+            // First, add all unique entries from BOOKS
+            booksData.forEach(bookEntry => {
+                if (!uniqueKeys.has(bookEntry.recoKey)) {
+                    uniqueKeys.add(bookEntry.recoKey);
+                    recoData.push({
+                        // Books Data
+                        GSTIN_Books: bookEntry.GSTIN,
+                        Supplier_Name_Books: bookEntry.Supplier_Name,
+                        Invoice_No_Books: bookEntry.Invoice_No,
+                        Invoice_Date_Books: formatDate(bookEntry.Invoice_Date),
+                        Taxable_Value_Books: bookEntry.Taxable_Value,
+                        IGST_Books: bookEntry.IGST,
+                        CGST_Books: bookEntry.CGST,
+                        SGST_Books: bookEntry.SGST,
+                        Cess_Books: bookEntry.Cess,
+                        // 2A Data (initially empty)
+                        GSTIN_2A: '',
+                        Supplier_Name_2A: '',
+                        Invoice_No_2A: '',
+                        Invoice_Date_2A: '',
+                        Taxable_Value_2A: 0,
+                        IGST_2A: 0,
+                        CGST_2A: 0,
+                        SGST_2A: 0,
+                        Cess_2A: 0,
+                        recoKey: bookEntry.recoKey,
+                        Status: '' // To be calculated
+                    });
+                }
+            });
+
+            // Then, iterate through 2A data and match or add new entries
+            _2AData.forEach(_2AEntry => {
+                const existingRecoEntry = recoData.find(r => r.recoKey === _2AEntry.recoKey);
+
+                if (existingRecoEntry) {
+                    // Update existing entry with 2A data
+                    existingRecoEntry.GSTIN_2A = _2AEntry.GSTIN;
+                    existingRecoEntry.Supplier_Name_2A = _2AEntry.Supplier_Name;
+                    existingRecoEntry.Invoice_No_2A = _2AEntry.Invoice_No;
+                    existingRecoEntry.Invoice_Date_2A = formatDate(_2AEntry.Invoice_Date);
+                    existingRecoEntry.Taxable_Value_2A = _2AEntry.Taxable_Value;
+                    existingRecoEntry.IGST_2A = _2AEntry.IGST;
+                    existingRecoEntry.CGST_2A = _2AEntry.CGST;
+                    existingRecoEntry.SGST_2A = _2AEntry.SGST;
+                    existingRecoEntry.Cess_2A = _2AEntry.Cess;
+                } else {
+                    // Add new entry for invoices only in 2A
+                    recoData.push({
+                        // Books Data (empty)
+                        GSTIN_Books: '',
+                        Supplier_Name_Books: '',
+                        Invoice_No_Books: '',
+                        Invoice_Date_Books: '',
+                        Taxable_Value_Books: 0,
+                        IGST_Books: 0,
+                        CGST_Books: 0,
+                        SGST_Books: 0,
+                        Cess_Books: 0,
+                        // 2A Data
+                        GSTIN_2A: _2AEntry.GSTIN,
+                        Supplier_Name_2A: _2AEntry.Supplier_Name,
+                        Invoice_No_2A: _2AEntry.Invoice_No,
+                        Invoice_Date_2A: formatDate(_2AEntry.Invoice_Date),
+                        Taxable_Value_2A: _2AEntry.Taxable_Value,
+                        IGST_2A: _2AEntry.IGST,
+                        CGST_2A: _2AEntry.CGST,
+                        SGST_2A: _2AEntry.SGST,
+                        Cess_2A: _2AEntry.Cess,
+                        recoKey: _2AEntry.recoKey,
+                        Status: '' // To be calculated
+                    });
+                }
+            });
+
+            // Calculate Status and Difference
+            return recoData.map(entry => {
+                const invoiceInBooks = entry.Invoice_No_Books !== '';
+                const invoiceIn2A = entry.Invoice_No_2A !== '';
+
+                // Books values:
+                const booksTaxable = entry.Taxable_Value_Books;
+                const booksIGST = entry.IGST_Books;
+                const booksCGST = entry.CGST_Books;
+                const booksSGST = entry.SGST_Books;
+                const booksCess = entry.Cess_Books;
+
+                // 2A values:
+                const _2ATaxable = entry.Taxable_Value_2A;
+                const _2AIGST = entry.IGST_2A;
+                const _2ACGST = entry.CGST_2A;
+                const _2ASGST = entry.SGST_2A;
+                const _2ACess = entry.Cess_2A;
+
+                // Calculate the difference for the main status logic
+                // As per VBA: Difference (Calc) = IGST_2A - IGST_Books (rounded)
+                const recoDiff = toNum((_2AIGST - booksIGST).toFixed(2)); // Ensure it's a number after toFixed
+
+                let status = '';
+                if (!invoiceInBooks && !invoiceIn2A) {
+                    status = "Invoice neither in Our Record nor in 2A";
+                } else if (!invoiceInBooks) {
+                    status = "Invoice not in our record";
+                } else if (!invoiceIn2A) {
+                    status = "Invoice not in 2A";
+                } else {
+                    // Total amount difference (Taxable + all Taxes)
+                    const totalAmountBooks = booksTaxable + booksIGST + booksCGST + booksSGST + booksCess;
+                    const totalAmount2A = _2ATaxable + _2AIGST + _2ACGST + _2ASGST + _2ACess;
+                    const overallDifference = totalAmountBooks - totalAmount2A;
+
+                    // Individual tax differences
+                    const igstDiff = booksIGST - _2AIGST;
+                    const cgstDiff = booksCGST - _2ACGST;
+                    const sgstDiff = booksSGST - _2ASGST;
+                    const cessDiff = booksCess - _2ACess;
+
+                    // Check for "Matched" or "Intelligent Matching"
+                    if (Math.abs(overallDifference) < 0.01) { // If overall difference is negligible
+                        // The original VBA had a condition `RC[-23]="""` for "Matched" and `RC[-23]>0` for "Intelligent Matching".
+                        // RC[-23] refers to the concatenated key. If the key exists, it means it's a valid entry.
+                        // I'll interpret "Intelligent Matching" as a match where the key existed, and "Matched" otherwise (though this might need more specific user clarification if the distinction is critical).
+                        // For now, if overall difference is negligible and key exists, it's Intelligent Matching.
+                        if (entry.recoKey && entry.recoKey !== '') {
+                            status = "Intelligent Matching";
+                        } else {
+                            status = "Matched"; // Fallback if key is somehow empty but amounts match
+                        }
+                    }
+                    // Check for "Tax Miss Match"
+                    // This implies total taxable values might be close, but tax components are off.
+                    // Re-interpreting the VBA's `OR((RC[-4]+RC[-3]+RC[-2])=0,...)` and `OR((RC[-4]-RC[-3]-RC[-2])>1,...)`
+                    // as conditions on the *books side* tax amounts and their differences.
+                    // For simplicity and common scenarios, I'll check if total taxable values are close
+                    // but there are significant differences in individual tax components.
+                    else if (Math.abs(booksTaxable - _2ATaxable) < 0.01 &&
+                             (Math.abs(igstDiff) > 0.01 || Math.abs(cgstDiff) > 0.01 || Math.abs(sgstDiff) > 0.01 || Math.abs(cessDiff) > 0.01)) {
+                        status = "Tax Miss Match";
+                    }
+                    // Check for "Difference in Amount"
+                    else if (Math.abs(overallDifference) > 10) { // Using 10 as the threshold from VBA
+                        status = "Difference in Amount";
+                    }
+                    // Default to "Minor Difference" for small discrepancies
+                    else {
+                        status = "Minor Difference";
+                    }
+                }
+
+                entry.Difference = recoDiff.toFixed(2); // Store the calculated IGST difference
+                entry.Status = status;
+                return entry;
+            });
+        }
+
+        // Calculates and displays subtotals
+        function calculateAndDisplaySubtotals(data) {
+            const subtotals = {};
+            let grandTotalCount = 0;
+            let grandTotalTaxableBooks = 0;
+            let grandTotalIGSTBooks = 0;
+            let grandTotalCGSTBooks = 0;
+            let grandTotalSGSTBooks = 0;
+            let grandTotalCessBooks = 0;
+            let grandTotalTaxable2A = 0;
+            let grandTotalIGST2A = 0;
+            let grandTotalCGST2A = 0;
+            let grandTotalSGST2A = 0;
+            let grandTotalCess2A = 0;
+            let grandTotalDifference = 0;
 
 
-header p{
-  color: #434F5B;
-}
-/* login link decoration*/
-.login-link {
-  font-size: 15px;
-  color: white; /* Text color is white */
-  text-decoration: none; /* Remove underline (if any) */
-}
-/* page link decoration  */
-#topnav{
-  font-family:sans-serif, cursive;
-  background-color: #2a34f5;
-  font-size: 20px;
-  display: flex;
-  text-decoration: none;
-  justify-content:start;
-  text-transform:capitalize;
-  width: 100%;
-}
-#topnav ul{
-  padding: 9px;
-  margin: 0px;
-  text-align: center;
-}
-#topnav ul li{
-  list-style-type: none;
-  display: inline;
-}
-#topnav ul li a{
-  color: #F2F2F2;
-  text-decoration: none;
-  margin: 0px 5px;
-  padding: 5px;
-}
-#topnav ul li a:hover{
-  border-bottom: 1px solid #F2F2F2;
-  -webkit-transition: 50ms linear 0s;
-  -moz-transition: 50ms linear 0s;
-  transition: 50ms linear 0s;
-}
+            data.forEach(entry => {
+                const status = entry.Status;
+                if (!subtotals[status]) {
+                    subtotals[status] = {
+                        count: 0,
+                        Taxable_Value_Books: 0, IGST_Books: 0, CGST_Books: 0, SGST_Books: 0, Cess_Books: 0,
+                        Taxable_Value_2A: 0, IGST_2A: 0, CGST_2A: 0, SGST_2A: 0, Cess_2A: 0,
+                        Difference: 0
+                    };
+                }
+                subtotals[status].count++;
+                subtotals[status].Taxable_Value_Books += entry.Taxable_Value_Books;
+                subtotals[status].IGST_Books += entry.IGST_Books;
+                subtotals[status].CGST_Books += entry.CGST_Books;
+                subtotals[status].SGST_Books += entry.SGST_Books;
+                subtotals[status].Cess_Books += entry.Cess_Books;
+                subtotals[status].Taxable_Value_2A += entry.Taxable_Value_2A;
+                subtotals[status].IGST_2A += entry.IGST_2A;
+                subtotals[status].CGST_2A += entry.CGST_2A;
+                subtotals[status].SGST_2A += entry.SGST_2A;
+                subtotals[status].Cess_2A += entry.Cess_2A;
+                subtotals[status].Difference += toNum(entry.Difference); // Ensure numerical addition
 
-        </style>
-   <header>
-    <h1>Aditya Kumar Vishwakarma</h1>
-</header>
+                grandTotalCount++;
+                grandTotalTaxableBooks += entry.Taxable_Value_Books;
+                grandTotalIGSTBooks += entry.IGST_Books;
+                grandTotalCGSTBooks += entry.CGST_Books;
+                grandTotalSGSTBooks += entry.SGST_Books;
+                grandTotalCessBooks += entry.Cess_Books;
+                grandTotalTaxable2A += entry.Taxable_Value_2A;
+                grandTotalIGST2A += entry.IGST_2A;
+                grandTotalCGST2A += entry.CGST_2A;
+                grandTotalSGST2A += entry.SGST_2A;
+                grandTotalCess2A += entry.Cess_2A;
+                grandTotalDifference += toNum(entry.Difference);
+            });
 
-<nav id="topnav">
-    <ul>
-        <li><a href="index.html">Home<i class=""></i></a></li>
-        <li><a href="Services.html">Services<i class=""></i></a></li>
-        <li><a href="download.html">Download<i class=""></i></a></li>
-    </ul>
-</nav>
+            subtotalsGlobal = subtotals; // Store subtotals globally
 
-<!-- Upload Button for Purchase -->
-<button onclick="uploadPurchase()">Upload Purchase</button>
-<input type="file" id="purchaseFile" accept=".csv, .xlsx">
+            let subtotalHtml = `
+                <table class="subtotal-table">
+                    <thead>
+                        <tr>
+                            <th>Status</th>
+                            <th>Count</th>
+                            <th>Taxable Value (Books)</th>
+                            <th>IGST (Books)</th>
+                            <th>CGST (Books)</th>
+                            <th>SGST (Books)</th>
+                            <th>Cess (Books)</th>
+                            <th>Taxable Value (2A/2B)</th>
+                            <th>IGST (2A/2B)</th>
+                            <th>CGST (2A/2B)</th>
+                            <th>SGST (2A/2B)</th>
+                            <th>Cess (2A/2B)</th>
+                            <th>Difference (Calc)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+            for (const status in subtotals) {
+                const s = subtotals[status];
+                subtotalHtml += `
+                    <tr>
+                        <td><span class="status-${status.toLowerCase().replace(/\s/g, '-')}">${status}</span></td>
+                        <td>${s.count}</td>
+                        <td>${s.Taxable_Value_Books.toFixed(2)}</td>
+                        <td>${s.IGST_Books.toFixed(2)}</td>
+                        <td>${s.CGST_Books.toFixed(2)}</td>
+                        <td>${s.SGST_Books.toFixed(2)}</td>
+                        <td>${s.Cess_Books.toFixed(2)}</td>
+                        <td>${s.Taxable_Value_2A.toFixed(2)}</td>
+                        <td>${s.IGST_2A.toFixed(2)}</td>
+                        <td>${s.CGST_2A.toFixed(2)}</td>
+                        <td>${s.SGST_2A.toFixed(2)}</td>
+                        <td>${s.Cess_2A.toFixed(2)}</td>
+                        <td>${s.Difference.toFixed(2)}</td>
+                    </tr>
+                `;
+            }
+            subtotalHtml += `
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <td><strong>Grand Total</strong></td>
+                            <td><strong>${grandTotalCount}</strong></td>
+                            <td><strong>${grandTotalTaxableBooks.toFixed(2)}</strong></td>
+                            <td><strong>${grandTotalIGSTBooks.toFixed(2)}</strong></td>
+                            <td><strong>${grandTotalCGSTBooks.toFixed(2)}</strong></td>
+                            <td><strong>${grandTotalSGSTBooks.toFixed(2)}</strong></td>
+                            <td><strong>${grandTotalCessBooks.toFixed(2)}</strong></td>
+                            <td><strong>${grandTotalTaxable2A.toFixed(2)}</strong></td>
+                            <td><strong>${grandTotalIGST2A.toFixed(2)}</strong></td>
+                            <td><strong>${grandTotalCGST2A.toFixed(2)}</strong></td>
+                            <td><strong>${grandTotalSGST2A.toFixed(2)}</strong></td>
+                            <td><strong>${grandTotalCess2A.toFixed(2)}</strong></td>
+                            <td><strong>${grandTotalDifference.toFixed(2)}</strong></td>
+                        </tr>
+                    </tfoot>
+                </table>
+            `;
+            document.getElementById('subtotalsContainer').innerHTML = subtotalHtml;
+        }
 
-<!-- Upload Button for GSTR 2A -->
-<button onclick="uploadGSTR2A()">Upload GSTR 2A</button>
-<input type="file" id="gstr2aFile" accept=".csv, .xlsx">
+
+        // Populates the status filter dropdown with unique statuses
+        function populateStatusFilter(data) {
+            const statusFilter = document.getElementById('statusFilter');
+            statusFilter.innerHTML = '<option value="all">Show All</option>'; // Reset options
+
+            const uniqueStatuses = new Set();
+            data.forEach(entry => {
+                if (entry.Status) {
+                    uniqueStatuses.add(entry.Status);
+                }
+            });
+
+            Array.from(uniqueStatuses).sort().forEach(status => {
+                const option = document.createElement('option');
+                option.value = status;
+                option.textContent = status;
+                statusFilter.appendChild(option);
+            });
+        }
+
+        // Simulates allinvoicesreco and final display
+        function displayReconciliationReport(reconciledData) {
+            const tableBody = document.querySelector('#recoTable tbody');
+            tableBody.innerHTML = ''; // Clear previous results
+
+            let sNo = 1;
+            reconciledData.forEach(entry => {
+                const row = tableBody.insertRow();
+                row.insertCell().textContent = sNo++;
+                row.insertCell().textContent = entry.GSTIN_Books || entry.GSTIN_2A;
+                row.insertCell().textContent = entry.Supplier_Name_Books || entry.Supplier_Name_2A;
+                row.insertCell().textContent = entry.Invoice_No_Books;
+                row.insertCell().textContent = entry.Invoice_Date_Books;
+                row.insertCell().textContent = entry.Taxable_Value_Books.toFixed(2);
+                row.insertCell().textContent = entry.IGST_Books.toFixed(2);
+                row.insertCell().textContent = entry.CGST_Books.toFixed(2);
+                row.insertCell().textContent = entry.SGST_Books.toFixed(2);
+                row.insertCell().textContent = entry.Cess_Books.toFixed(2);
+                row.insertCell().textContent = entry.Invoice_No_2A;
+                row.insertCell().textContent = entry.Invoice_Date_2A;
+                row.insertCell().textContent = entry.Taxable_Value_2A.toFixed(2);
+                row.insertCell().textContent = entry.IGST_2A.toFixed(2);
+                row.insertCell().textContent = entry.CGST_2A.toFixed(2);
+                row.insertCell().textContent = entry.SGST_2A.toFixed(2);
+                row.insertCell().textContent = entry.Cess_2A.toFixed(2);
+                row.insertCell().textContent = entry.Difference;
+
+                const statusCell = row.insertCell();
+                const statusSpan = document.createElement('span');
+                statusSpan.textContent = entry.Status;
+                statusSpan.classList.add('status-' + entry.Status.toLowerCase().replace(/\s/g, '-'));
+                statusCell.appendChild(statusSpan);
+            });
+        }
+
+        // Function to download Excel (.xlsx)
+        function downloadExcel(data, filename, sheetNames) {
+            const workbook = XLSX.utils.book_new();
+
+            // Sheet 1: As Per GSTR-2A or 2B
+            if (processed2AGlobal && processed2AGlobal.length > 0) {
+                const sheet2AData = processed2AGlobal.map(item => ({
+                    'GSTIN': item.GSTIN,
+                    'Supplier Name': item.Supplier_Name,
+                    'Invoice No.': item.Invoice_No,
+                    'Invoice Date': formatDate(item.Invoice_Date), // Ensure date is formatted
+                    'Taxable Value': toNum(item.Taxable_Value).toFixed(2),
+                    'IGST': toNum(item.IGST).toFixed(2),
+                    'CGST': toNum(item.CGST).toFixed(2),
+                    'SGST': toNum(item.SGST).toFixed(2),
+                    'Cess': toNum(item.Cess).toFixed(2)
+                }));
+                XLSX.utils.book_append_sheet(workbook, XLSX.utils.json_to_sheet(sheet2AData), sheetNames[0] || "As Per GSTR-2A or 2B");
+            }
+
+            // Sheet 2: As Per Books
+            if (processedBooksGlobal && processedBooksGlobal.length > 0) {
+                const sheetBooksData = processedBooksGlobal.map(item => ({
+                    'GSTIN': item.GSTIN,
+                    'Supplier Name': item.Supplier_Name,
+                    'Invoice No.': item.Invoice_No,
+                    'Invoice Date': formatDate(item.Invoice_Date), // Ensure date is formatted
+                    'Taxable Value': toNum(item.Taxable_Value).toFixed(2),
+                    'IGST': toNum(item.IGST).toFixed(2),
+                    'CGST': toNum(item.CGST).toFixed(2),
+                    'SGST': toNum(item.SGST).toFixed(2),
+                    'Cess': toNum(item.Cess).toFixed(2)
+                }));
+                XLSX.utils.book_append_sheet(workbook, XLSX.utils.json_to_sheet(sheetBooksData), sheetNames[1] || "As Per Books");
+            }
+
+            // Sheet 3: Final Report
+            if (data && data.length > 0) {
+                const finalReportData = data.map((entry, index) => ({
+                    'S.No.': index + 1,
+                    'GSTIN': entry.GSTIN_Books || entry.GSTIN_2A,
+                    'Supplier Name': entry.Supplier_Name_Books || entry.Supplier_Name_2A,
+                    'Invoice No. (Books)': entry.Invoice_No_Books,
+                    'Invoice Date (Books)': entry.Invoice_Date_Books,
+                    'Taxable Value (Books)': toNum(entry.Taxable_Value_Books).toFixed(2),
+                    'IGST (Books)': toNum(entry.IGST_Books).toFixed(2),
+                    'CGST (Books)': toNum(entry.CGST_Books).toFixed(2),
+                    'SGST (Books)': toNum(entry.SGST_Books).toFixed(2),
+                    'Cess (Books)': toNum(entry.Cess_Books).toFixed(2),
+                    'Invoice No. (2A)': entry.Invoice_No_2A,
+                    'Invoice Date (2A)': entry.Invoice_Date_2A,
+                    'Taxable Value (2A)': toNum(entry.Taxable_Value_2A).toFixed(2),
+                    'IGST (2A)': toNum(entry.IGST_2A).toFixed(2),
+                    'CGST (2A)': toNum(entry.CGST_2A).toFixed(2),
+                    'SGST (2A)': toNum(entry.SGST_2A).toFixed(2),
+                    'Cess (2A)': toNum(entry.Cess_2A).toFixed(2),
+                    'Difference (Calc)': toNum(entry.Difference).toFixed(2),
+                    'Status': entry.Status
+                }));
+                XLSX.utils.book_append_sheet(workbook, XLSX.utils.json_to_sheet(finalReportData), sheetNames[2] || "Final Report");
+            }
+
+            // Sheet 4: Summary
+            if (Object.keys(subtotalsGlobal).length > 0) {
+                const summaryData = [];
+                // Convert subtotalsGlobal object to an array for consistent mapping
+                for (const status in subtotalsGlobal) {
+                    const s = subtotalsGlobal[status];
+                    summaryData.push({
+                        'Status': status,
+                        'Taxable Value (Books)': toNum(s.Taxable_Value_Books).toFixed(2),
+                        'IGST (Books)': toNum(s.IGST_Books).toFixed(2),
+                        'CGST (Books)': toNum(s.CGST_Books).toFixed(2),
+                        'SGST (Books)': toNum(s.SGST_Books).toFixed(2),
+                        'Cess (Books)': toNum(s.Cess_Books).toFixed(2),
+                        'Taxable Value (2A/2B)': toNum(s.Taxable_Value_2A).toFixed(2),
+                        'IGST (2A/2B)': toNum(s.IGST_2A).toFixed(2),
+                        'CGST (2A/2B)': toNum(s.CGST_2A).toFixed(2),
+                        'SGST (2A/2B)': toNum(s.SGST_2A).toFixed(2),
+                        'Cess (2A/2B)': toNum(s.Cess_2A).toFixed(2),
+                        'Difference (Calc)': toNum(s.Difference).toFixed(2)
+                    });
+                }
+                XLSX.utils.book_append_sheet(workbook, XLSX.utils.json_to_sheet(summaryData), sheetNames[3] || "Summary");
+            }
+
+            XLSX.writeFile(workbook, filename);
+        }
+
+        // Function to download the full reconciliation report
+        function downloadReconciliationReport() {
+            if (reconciledDataGlobal && reconciledDataGlobal.length > 0) {
+                downloadExcel(reconciledDataGlobal, 'GST_Reconciliation_Report.xlsx', ["As Per GSTR-2A or 2B", "As Per Books", "Final Report", "Summary"]);
+                displayMessage("Reconciliation report downloaded successfully!", 'success');
+            } else {
+                displayMessage("No reconciliation report available to download.", 'warning');
+            }
+        }
+
+        // Generate and download sample 2A format Excel
+        function generate2AFormat() {
+            const sampleData = [{
+                GSTIN: '27ABCDE1234F1Z5',
+                Supplier_Name: 'Sample Supplier A',
+                Invoice_No: 'INV001',
+                Invoice_Date: '01/01/2023', // MM/DD/YYYY
+                Taxable_Value: '1000.00',
+                IGST: '90.00',
+                CGST: '90.00',
+                SGST: '90.00',
+                Cess: '0.00'
+            }];
+            downloadExcel(sampleData, 'gstr2a_format.xlsx', ["GSTR-2A or 2B Format"]);
+            displayMessage("GSTR-2A or 2B format Excel (.xlsx) downloaded.", 'info');
+        }
+
+        // Generate and download sample Books format Excel
+        function generateBooksFormat() {
+            const sampleData = [{
+                GSTIN: '27ABCDE1234F1Z5',
+                Supplier_Name: 'Sample Supplier B',
+                Invoice_No: 'INV002',
+                Invoice_Date: '01/02/2023', // MM/DD/YYYY
+                Taxable_Value: '1500.00',
+                IGST: '135.00',
+                CGST: '135.00',
+                SGST: '135.00',
+                Cess: '0.00'
+            }];
+            downloadExcel(sampleData, 'books_format.xlsx', ["Books Format"]);
+            displayMessage("Books format Excel (.xlsx) downloaded.", 'info');
+        }
+
+        // Function to control section visibility
+        function showSection(sectionId) {
+            document.getElementById('uploadContainer').classList.add('hidden');
+            document.getElementById('reportSection').classList.add('hidden');
+            document.getElementById('summarySection').classList.add('hidden'); // Hide new summary section
+
+            if (sectionId === 'upload') {
+                document.getElementById('uploadContainer').classList.remove('hidden');
+            } else if (sectionId === 'report') {
+                document.getElementById('reportSection').classList.remove('hidden');
+            } else if (sectionId === 'summary') { // New section visibility control
+                document.getElementById('summarySection').classList.remove('hidden');
+            }
+        }
+
+        // --- Event Listeners ---
+
+        document.getElementById('file2A').addEventListener('change', (event) => {
+            const file = event.target.files[0];
+            if (file) {
+                document.getElementById('fileName2A').textContent = `Selected: ${file.name}`;
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    try {
+                        data2A = parseExcel(e.target.result);
+                        displayMessage(`'${file.name}' loaded successfully.`, 'info');
+                        document.getElementById('viewReportBtn').classList.add('hidden'); // Hide view report button on new upload
+                        reconciledDataGlobal = null; // Clear previous reconciliation data
+                        processedBooksGlobal = null; // Clear processed data
+                        processed2AGlobal = null;   // Clear processed data
+                        subtotalsGlobal = {}; // Clear subtotals
+                    } catch (error) {
+                        console.error("Error parsing Excel file:", error);
+                        displayMessage(`Error parsing '${file.name}'. Please ensure it's a valid .xlsx file and has the correct headers.`, 'error');
+                        data2A = []; // Clear data on error
+                    }
+                };
+                reader.onerror = () => {
+                    displayMessage(`Error reading '${file.name}'.`, 'error');
+                };
+                reader.readAsArrayBuffer(file); // Read as ArrayBuffer for Excel
+            } else {
+                document.getElementById('fileName2A').textContent = '';
+                data2A = [];
+            }
+        });
+
+        document.getElementById('fileBooks').addEventListener('change', (event) => {
+            const file = event.target.files[0];
+            if (file) {
+                document.getElementById('fileNameBooks').textContent = `Selected: ${file.name}`;
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    try {
+                        dataBooks = parseExcel(e.target.result);
+                        displayMessage(`'${file.name}' loaded successfully.`, 'info');
+                        document.getElementById('viewReportBtn').classList.add('hidden'); // Hide view report button on new upload
+                        reconciledDataGlobal = null; // Clear previous reconciliation data
+                        processedBooksGlobal = null; // Clear processed data
+                        processed2AGlobal = null;   // Clear processed data
+                        subtotalsGlobal = {}; // Clear subtotals
+                    } catch (error) {
+                        console.error("Error parsing Excel file:", error);
+                        displayMessage(`Error parsing '${file.name}'. Please ensure it's a valid .xlsx file and has the correct headers.`, 'error');
+                        dataBooks = []; // Clear data on error
+                    }
+                };
+                reader.onerror = () => {
+                    displayMessage(`Error reading '${file.name}'.`, 'error');
+                };
+                reader.readAsArrayBuffer(file); // Read as ArrayBuffer for Excel
+            } else {
+                document.getElementById('fileNameBooks').textContent = '';
+                dataBooks = [];
+            }
+        });
+
+        document.getElementById('reconcileBtn').addEventListener('click', () => {
+            if (data2A.length === 0 || dataBooks.length === 0) {
+                displayMessage("Please upload both 'As Per GSTR-2A or 2B' and 'As Per Books' Excel files before reconciling.", 'warning');
+                return;
+            }
+
+            // Show loading spinner
+            document.getElementById('buttonText').classList.add('hidden');
+            document.getElementById('loadingSpinner').classList.remove('hidden');
+            document.getElementById('reconcileBtn').disabled = true;
+
+            // Simulate a delay for processing (like VBA execution time)
+            setTimeout(() => {
+                try {
+                    const { processedBooks, processed2A } = processRawData(dataBooks, data2A);
+                    processedBooksGlobal = processedBooks; // Store for download
+                    processed2AGlobal = processed2A;     // Store for download
+                    reconciledDataGlobal = performReconciliation(processedBooks, processed2A); // Store result globally
+                    
+                    // Populate filter and display report/subtotals
+                    populateStatusFilter(reconciledDataGlobal);
+                    displayReconciliationReport(reconciledDataGlobal);
+                    calculateAndDisplaySubtotals(reconciledDataGlobal); // This populates subtotalsGlobal
+
+                    showSection('report'); // Show report section
+                    document.getElementById('viewReportBtn').classList.remove('hidden'); // Show view report button
+                    displayMessage("Reconciliation is ready. Hope you will like it!", 'success');
+                } catch (error) {
+                    console.error("Reconciliation error:", error);
+                    displayMessage(`An error occurred during reconciliation: ${error.message}`, 'error');
+                } finally {
+                    // Hide loading spinner
+                    document.getElementById('buttonText').classList.remove('hidden');
+                    document.getElementById('loadingSpinner').classList.add('hidden');
+                    document.getElementById('reconcileBtn').disabled = false;
+                }
+            }, 500); // Small delay to show loading state
+        });
+
+        document.getElementById('download2AFormatBtn').addEventListener('click', generate2AFormat);
+        document.getElementById('downloadBooksFormatBtn').addEventListener('click', generateBooksFormat);
+        document.getElementById('backToUploadBtn').addEventListener('click', () => {
+            showSection('upload');
+            displayMessage("Ready to upload new files or view previous report.", 'info');
+        });
+        document.getElementById('viewReportBtn').addEventListener('click', () => {
+            if (reconciledDataGlobal && reconciledDataGlobal.length > 0) {
+                // Re-populate filter and display report/subtotals with global data
+                populateStatusFilter(reconciledDataGlobal);
+                displayReconciliationReport(reconciledDataGlobal);
+                // No need to calculateAndDisplaySubtotals here, as it's for the summary view
+                showSection('report');
+                displayMessage("Displaying previous reconciliation report.", 'info');
+            } else {
+                displayMessage("No reconciliation report available. Please upload files and perform reconciliation first.", 'warning');
+            }
+        });
+
+        document.getElementById('viewSummaryBtn').addEventListener('click', () => {
+            if (reconciledDataGlobal && reconciledDataGlobal.length > 0) {
+                calculateAndDisplaySubtotals(reconciledDataGlobal); // Ensure subtotals are rendered for the summary view
+                showSection('summary');
+                displayMessage("Displaying reconciliation summary.", 'info');
+            } else {
+                displayMessage("No reconciliation report available to summarize. Please upload files and perform reconciliation first.", 'warning');
+            }
+        });
+
+        document.getElementById('backToReportFromSummaryBtn').addEventListener('click', () => {
+            showSection('report');
+            displayMessage("Back to detailed reconciliation report.", 'info');
+        });
 
 
-<!-- Reconciliation Button -->
-<button onclick="runReconciliation()">Run Reconciliation</button>
+        document.getElementById('statusFilter').addEventListener('change', (event) => {
+            const selectedStatus = event.target.value;
+            let filteredData = [];
 
-<!-- Show Reconciliation Results Button -->
-<button onclick="showReconciliationResults()">Show Reconciliation Results</button>
+            if (selectedStatus === 'all') {
+                filteredData = reconciledDataGlobal;
+            } else {
+                filteredData = reconciledDataGlobal.filter(entry => entry.Status === selectedStatus);
+            }
+            displayReconciliationReport(filteredData);
+            // When filtering the main report, we should still show the subtotals for the *filtered* data
+            // However, the user asked for a separate summary view. So, the subtotals in the main report
+            // were removed. The subtotals in the summary view should always reflect the *full* data
+            // unless the user explicitly filters the summary itself.
+            // For now, `calculateAndDisplaySubtotals` will be called only when viewing the summary.
+            // If the user filters the main report, the summary itself doesn't change unless they go to summary view.
+            // If they want the summary to reflect the filter, we'd need to change `calculateAndDisplaySubtotals` to take `filteredData`
+            // and then call it here. For now, the summary is a *global* summary.
+        });
 
-<!-- Download Reconciliation Report Button -->
-<button onclick="downloadReconciliationReport()">Download Reconciliation Report</button>
+        document.getElementById('downloadReportBtn').addEventListener('click', downloadReconciliationReport);
 
 
-  <body>
-  
-  
-  <script>
-  // Function to handle Purchase upload
-function uploadPurchase() {
-    // Add your logic to upload the purchase file and update the table here
-    alert("Purchase file uploaded!");
-}
+        function displayMessage(message, type) {
+            const messageBox = document.getElementById('messageBox');
+            messageBox.textContent = message;
+            messageBox.classList.remove('hidden', 'bg-red-100', 'border-red-400', 'text-red-700', 'bg-yellow-100', 'border-yellow-400', 'text-yellow-700', 'bg-green-100', 'border-green-400', 'text-green-700', 'bg-blue-100', 'border-blue-400', 'text-blue-700');
 
-// Function to handle GSTR 2A upload
-function uploadGSTR2A() {
-    // Add your logic to upload the GSTR 2A file and update the table here
-    alert("GSTR 2A file uploaded!");
-}
+            if (type === 'success') {
+                messageBox.classList.add('bg-green-100', 'border-green-400', 'text-green-700');
+            } else if (type === 'error') {
+                messageBox.classList.add('bg-red-100', 'border-red-400', 'text-red-700');
+            } else if (type === 'warning') {
+                messageBox.classList.add('bg-yellow-100', 'border-yellow-400', 'text-yellow-700');
+            } else { // info
+                messageBox.classList.add('bg-blue-100', 'border-blue-400', 'text-blue-700');
+            }
+            messageBox.classList.remove('hidden');
+        }
 
-// Function to run reconciliation
-function runReconciliation() {
-    // Add your logic to run reconciliation in the background here
-    alert("Reconciliation is running in the background!");
-}
-
-// Function to show reconciliation results
-function showReconciliationResults() {
-    // Add your logic to display reconciliation results
-    alert("Showing reconciliation results...");
-}
-
-// Function to download reconciliation report
-function downloadReconciliationReport() {
-    // Add your logic to generate and download the reconciliation report
-    alert("Downloading reconciliation report...");
-}
-
-  </script>
+        // Initial setup on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            showSection('upload'); // Start on the upload section
+        });
+    </script>
 </body>
 </html>
-    
