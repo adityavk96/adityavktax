@@ -4,9 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GST Reconciliation</title>
-    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- SheetJS (xlsx) CDN for Excel file handling -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <style>
         body {
@@ -168,17 +166,14 @@
 </head>
 <body>
     <div class="container">
-        <h1 class="text-4xl font-extrabold text-center text-indigo-300 mb-8">GST Reconciliation Web App</h1>
+        <h1 class="text-4xl font-extrabold text-center text-indigo-300 mb-8">Reconciliation</h1>
 
-        <!-- Upload and Download Container -->
         <div id="uploadContainer">
-            <!-- File Upload Section -->
             <div class="card">
                 <h2 class="text-2xl font-semibold mb-4 text-gray-200">Upload Data Files</h2>
                 <p class="text-gray-400 mb-4">Please upload your "As Per GSTR-2A or 2B" and "As Per Books" data in Excel (.xlsx) format. Ensure the column headers match the specified format.</p>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <!-- 2A Upload -->
                     <div>
                         <label for="file2A" class="block text-lg font-medium text-gray-300 mb-2">As Per GSTR-2A or 2B (Excel .xlsx)</label>
                         <input type="file" id="file2A" accept=".xlsx" class="block w-full text-sm text-gray-400
@@ -190,7 +185,6 @@
                         <p id="fileName2A" class="mt-2 text-sm text-gray-400"></p>
                     </div>
 
-                    <!-- Books Upload -->
                     <div>
                         <label for="fileBooks" class="block text-lg font-medium text-gray-300 mb-2">As Per Books (Excel .xlsx)</label>
                         <input type="file" id="fileBooks" accept=".xlsx" class="block w-full text-sm text-gray-400
@@ -215,23 +209,19 @@
                 <div id="messageBox" class="message-box hidden"></div>
             </div>
 
-            <!-- Download Format Section -->
             <div class="card">
                 <h2 class="text-2xl font-semibold mb-4 text-gray-200">Download Data Formats</h2>
-                <p class="text-gray-400 mb-4">Download sample Excel (.xlsx) files to ensure your data is in the correct format for upload.</p>
+                <p class="text-gray-400 mb-4">Download a sample Excel (.xlsx) file to ensure your data is in the correct format for upload.</p>
                 <div class="flex flex-col md:flex-row gap-4">
-                    <button id="download2AFormatBtn" class="btn btn-secondary flex-1">Download GSTR-2A or 2B Format</button>
-                    <button id="downloadBooksFormatBtn" class="btn btn-secondary flex-1">Download Books Format</button>
+                    <button id="downloadFormatBtn" class="btn btn-secondary flex-1">Download Format</button>
                 </div>
             </div>
 
-            <!-- View Reconciliation Button (initially hidden) -->
             <div class="flex justify-center mt-4">
                 <button id="viewReportBtn" class="btn btn-primary hidden">View Reconciliation Report</button>
             </div>
         </div>
 
-        <!-- Reconciliation Report Section -->
         <div id="reportSection" class="card hidden">
             <div class="flex justify-between items-center mb-4">
                 <h2 class="text-2xl font-semibold text-gray-200">Reconciliation Report: All Invoice Reco Status</h2>
@@ -269,28 +259,24 @@
                                     <span>Status</span>
                                     <select id="statusFilter" class="ml-2 p-1 border rounded-md text-sm text-gray-700 bg-gray-300">
                                         <option value="all">Show All</option>
-                                        <!-- Options populated by JS -->
-                                    </select>
+                                        </select>
                                 </div>
                             </th>
                         </tr>
                     </thead>
                     <tbody>
-                        <!-- Data will be inserted here by JavaScript -->
-                    </tbody>
+                        </tbody>
                 </table>
             </div>
         </div>
 
-        <!-- Summary Section -->
         <div id="summarySection" class="card hidden">
             <div class="flex justify-between items-center mb-4">
                 <h2 class="text-2xl font-semibold text-gray-200">Reconciliation Summary</h2>
                 <button id="backToReportFromSummaryBtn" class="btn btn-secondary">Back to Report</button>
             </div>
             <div id="subtotalsContainer">
-                <!-- Subtotal table will be rendered here -->
-            </div>
+                </div>
         </div>
     </div>
 
@@ -827,38 +813,25 @@
             }
         }
 
-        // Generate and download sample 2A format Excel
-        function generate2AFormat() {
+        // Generate and download a single format Excel
+        function generateSingleFormat() {
             const sampleData = [{
-                GSTIN: '27ABCDE1234F1Z5',
-                Supplier_Name: 'Sample Supplier A',
-                Invoice_No: 'INV001',
-                Invoice_Date: '01/01/2023', // MM/DD/YYYY
-                Taxable_Value: '1000.00',
-                IGST: '90.00',
-                CGST: '90.00',
-                SGST: '90.00',
-                Cess: '0.00'
+                'S.No.': 1,
+                'GSTIN': '27ABCDE1234F1Z5',
+                'Supplier Name': 'Sample Supplier',
+                'Invoice No.': 'INV001',
+                'Invoice Date': '01/01/2023',
+                'Taxable Value': '1000.00',
+                'IGST': '90.00',
+                'CGST': '90.00',
+                'SGST': '90.00',
+                'Cess': '0.00'
             }];
-            downloadExcel(sampleData, 'gstr2a_format.xlsx', ["GSTR-2A or 2B Format"]);
-            displayMessage("GSTR-2A or 2B format Excel (.xlsx) downloaded.", 'info');
-        }
-
-        // Generate and download sample Books format Excel
-        function generateBooksFormat() {
-            const sampleData = [{
-                GSTIN: '27ABCDE1234F1Z5',
-                Supplier_Name: 'Sample Supplier B',
-                Invoice_No: 'INV002',
-                Invoice_Date: '01/02/2023', // MM/DD/YYYY
-                Taxable_Value: '1500.00',
-                IGST: '135.00',
-                CGST: '135.00',
-                SGST: '135.00',
-                Cess: '0.00'
-            }];
-            downloadExcel(sampleData, 'books_format.xlsx', ["Books Format"]);
-            displayMessage("Books format Excel (.xlsx) downloaded.", 'info');
+            const worksheet = XLSX.utils.json_to_sheet(sampleData);
+            const workbook = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(workbook, worksheet, "Format");
+            XLSX.writeFile(workbook, 'gst_reco_format.xlsx');
+            displayMessage("Format Excel (.xlsx) downloaded.", 'info');
         }
 
         // Function to control section visibility
@@ -976,9 +949,9 @@
                 }
             }, 500); // Small delay to show loading state
         });
+        
+        document.getElementById('downloadFormatBtn').addEventListener('click', generateSingleFormat);
 
-        document.getElementById('download2AFormatBtn').addEventListener('click', generate2AFormat);
-        document.getElementById('downloadBooksFormatBtn').addEventListener('click', generateBooksFormat);
         document.getElementById('backToUploadBtn').addEventListener('click', () => {
             showSection('upload');
             displayMessage("Ready to upload new files or view previous report.", 'info');
